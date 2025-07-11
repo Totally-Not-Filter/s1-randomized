@@ -20,9 +20,9 @@ Revision	  = 1
 
 ZoneCount	  = 6	; discrete zones are: GHZ, MZ, SYZ, LZ, SLZ, and SBZ
 
-FixBugs		  = 0	; change to 1 to enable bugfixes
+FixBugs		  = 1	; change to 1 to enable bugfixes
 
-zeroOffsetOptimization = 0	; if 1, makes a handful of zero-offset instructions smaller
+zeroOffsetOptimization = 1	; if 1, makes a handful of zero-offset instructions smaller
 
 	include "MacroSetup.asm"
 	include	"Constants.asm"
@@ -32,7 +32,7 @@ zeroOffsetOptimization = 0	; if 1, makes a handful of zero-offset instructions s
 ; ===========================================================================
 
 StartOfRom:
-Vectors:	dc.l v_systemstack&$FFFFFF	; Initial stack pointer value
+Vectors:	dc.l v_systemstack	; Initial stack pointer value
 		dc.l EntryPoint			; Start of program
 		dc.l BusError			; Bus error
 		dc.l AddressError		; Address error (4)
@@ -6927,6 +6927,7 @@ Map_LWall:	include	"_maps/Wall of Lava.asm"
 		include	"_anim/Moto Bug.asm"
 Map_Moto:	include	"_maps/Moto Bug.asm"
 		include	"_incObj/4F.asm"
+Map_Splats:	include "_maps/Splats.asm"
 
 		include	"_incObj/50 Yadrin.asm"
 		include	"_anim/Yadrin.asm"
@@ -7769,10 +7770,7 @@ loc_1504A:
 ObjHitWallLeft:
 		add.w	obX(a0),d3
 		move.w	obY(a0),d2
-		; Engine bug: colliding with left walls is erratic with this function.
-		; The cause is this: a missing instruction to flip collision on the found
-		; 16x16 block; this one:
-		;eori.w	#$F,d3
+		eori.w	#$F,d3
 		lea	(v_anglebuffer).w,a4
 		move.b	#0,(a4)
 		movea.w	#-$10,a3
