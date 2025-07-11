@@ -8637,16 +8637,12 @@ Art_LivesNums:	binclude	"artunc/Lives Counter Numbers.bin" ; 8x8 pixel numbers o
 		include	"_inc/LevelHeaders.asm"
 		include	"_inc/Pattern Load Cues.asm"
 
-		align	$200
 		if Revision=0
 Nem_SegaLogo:	binclude	"artnem/Sega Logo.nem"	; large Sega logo
 		even
 Eni_SegaLogo:	binclude	"tilemaps/Sega Logo.eni" ; large Sega logo (mappings)
 		even
 		else
-		rept $300
-			dc.b	$FF
-		endm
 Nem_SegaLogo:	binclude	"artnem/Sega Logo (JP1).nem" ; large Sega logo
 			even
 Eni_SegaLogo:	binclude	"tilemaps/Sega Logo (JP1).eni" ; large Sega logo (mappings)
@@ -8755,13 +8751,9 @@ Nem_Swing:	binclude	"artnem/GHZ Swinging Platform.nem"
 		even
 Nem_Bridge:	binclude	"artnem/GHZ Bridge.nem"
 		even
-Nem_GhzUnkBlock:binclude	"artnem/Unused - GHZ Block.nem"
-		even
 Nem_Ball:	binclude	"artnem/GHZ Giant Ball.nem"
 		even
 Nem_Spikes:	binclude	"artnem/Spikes.nem"
-		even
-Nem_GhzLog:	binclude	"artnem/Unused - GHZ Log.nem"
 		even
 Nem_SpikePole:	binclude	"artnem/GHZ Spiked Log.nem"
 		even
@@ -8814,8 +8806,6 @@ Nem_MzMetal:	binclude	"artnem/MZ Metal Blocks.nem"
 Nem_MzSwitch:	binclude	"artnem/MZ Switch.nem"
 		even
 Nem_MzGlass:	binclude	"artnem/MZ Green Glass Block.nem"
-		even
-Nem_UnkGrass:	binclude	"artnem/Unused - Grass.nem"
 		even
 Nem_MzFire:	binclude	"artnem/Fireballs.nem"
 		even
@@ -8894,8 +8884,6 @@ Nem_BallHog:	binclude	"artnem/Enemy Ball Hog.nem"
 Nem_Crabmeat:	binclude	"artnem/Enemy Crabmeat.nem"
 		even
 Nem_Buzz:	binclude	"artnem/Enemy Buzz Bomber.nem"
-		even
-Nem_UnkExplode:	binclude	"artnem/Unused - Explosion.nem"
 		even
 Nem_Burrobot:	binclude	"artnem/Enemy Burrobot.nem"
 		even

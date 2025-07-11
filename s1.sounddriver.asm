@@ -845,16 +845,16 @@ Sound_PlayBGM:
 		move.b	SMPS_Track.VoiceControl(a1),d0	; Get voice control bits
 		bmi.s	.sfxpsgchannel			; Branch if this is a PSG channel
 		subq.b	#2,d0				; SFX can't have FM1 or FM2
-		lsl.b	#2,d0				; Convert to index
+		add.b	d0,d0				; Convert to index
 		bra.s	.gotchannelindex
 ; ===========================================================================
 ; loc_7216E:
 .sfxpsgchannel:
-		lsr.b	#3,d0		; Convert to index
+		lsr.b	#4,d0		; Convert to index
 ; loc_72170:
 .gotchannelindex:
 		lea	SFX_BGMChannelRAM(pc),a0
-		movea.l	(a0,d0.w),a0
+		movea.w	(a0,d0.w),a0
 		bset	#2,SMPS_Track.PlaybackControl(a0)	; Set 'SFX is overriding' bit
 ; loc_7217C:
 .sfxnext:
@@ -941,17 +941,17 @@ Sound_PlaySFX:
 		move.b	d3,d4
 		bmi.s	.sfxinitpsg	; Branch if PSG
 		subq.w	#2,d3		; SFX can only have FM3, FM4 or FM5
-		lsl.w	#2,d3
+		add.w	d3,d3
 		lea	SFX_BGMChannelRAM(pc),a5
-		movea.l	(a5,d3.w),a5
+		movea.w	(a5,d3.w),a5
 		bset	#2,SMPS_Track.PlaybackControl(a5)	; Mark music track as being overridden
 		bra.s	.sfxoverridedone
 ; ===========================================================================
 ; loc_72244:
 .sfxinitpsg:
-		lsr.w	#3,d3
+		lsr.w	#4,d3
 		lea	SFX_BGMChannelRAM(pc),a5
-		movea.l	(a5,d3.w),a5
+		movea.w	(a5,d3.w),a5
 		bset	#2,SMPS_Track.PlaybackControl(a5)	; Mark music track as being overridden
 		cmpi.b	#$C0,d4					; Is this PSG 3?
 		bne.s	.sfxoverridedone			; Branch if not
@@ -962,7 +962,7 @@ Sound_PlaySFX:
 		move.b	d0,(psg_input).l
 ; loc_7226E:
 .sfxoverridedone:
-		movea.l	SFX_SFXChannelRAM(pc,d3.w),a5
+		movea.w	SFX_SFXChannelRAM(pc,d3.w),a5
 		movea.l	a5,a2
 		moveq	#(SMPS_Track.len/4)-1,d0	; $30 bytes
 ; loc_72276:
@@ -1010,24 +1010,24 @@ Sound_PlaySFX:
 ; ---------------------------------------------------------------------------
 ; dword_722CC: BGMChannelRAM:
 SFX_BGMChannelRAM:
-		dc.l v_snddriver_ram.v_music_fm3_track
-		dc.l 0
-		dc.l v_snddriver_ram.v_music_fm4_track
-		dc.l v_snddriver_ram.v_music_fm5_track
-		dc.l v_snddriver_ram.v_music_psg1_track
-		dc.l v_snddriver_ram.v_music_psg2_track
-		dc.l v_snddriver_ram.v_music_psg3_track	; Plain PSG3
-		dc.l v_snddriver_ram.v_music_psg3_track	; Noise
+		dc.w v_snddriver_ram.v_music_fm3_track
+		dc.w 0
+		dc.w v_snddriver_ram.v_music_fm4_track
+		dc.w v_snddriver_ram.v_music_fm5_track
+		dc.w v_snddriver_ram.v_music_psg1_track
+		dc.w v_snddriver_ram.v_music_psg2_track
+		dc.w v_snddriver_ram.v_music_psg3_track	; Plain PSG3
+		dc.w v_snddriver_ram.v_music_psg3_track	; Noise
 ; dword_722EC: SFXChannelRAM:
 SFX_SFXChannelRAM:
-		dc.l v_snddriver_ram.v_sfx_fm3_track
-		dc.l 0
-		dc.l v_snddriver_ram.v_sfx_fm4_track
-		dc.l v_snddriver_ram.v_sfx_fm5_track
-		dc.l v_snddriver_ram.v_sfx_psg1_track
-		dc.l v_snddriver_ram.v_sfx_psg2_track
-		dc.l v_snddriver_ram.v_sfx_psg3_track	; Plain PSG3
-		dc.l v_snddriver_ram.v_sfx_psg3_track	; Noise
+		dc.w v_snddriver_ram.v_sfx_fm3_track
+		dc.w 0
+		dc.w v_snddriver_ram.v_sfx_fm4_track
+		dc.w v_snddriver_ram.v_sfx_fm5_track
+		dc.w v_snddriver_ram.v_sfx_psg1_track
+		dc.w v_snddriver_ram.v_sfx_psg2_track
+		dc.w v_snddriver_ram.v_sfx_psg3_track	; Plain PSG3
+		dc.w v_snddriver_ram.v_sfx_psg3_track	; Noise
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Play GHZ waterfall sound
@@ -1181,6 +1181,8 @@ DoFadeOut:
 ; loc_72558:
 .sendpsgvol:
 		move.b	SMPS_Track.Volume(a5),d6	; Store new volume attenuation
+		tst.b	SMPS_Track.VoiceIndex(a5)	; Is this track using volume envelope 0 (no envelope)?
+		bne.s	.nextpsg				; If so, update volume (this code is only run on envelope 1+, so we need to do it here for envelope 0)
 		jsr	SetPSGVolume(pc)
 ; loc_72560:
 .nextpsg:
@@ -1394,11 +1396,8 @@ DoFadeIn:
 		bpl.s	.nextpsg			; Branch if not
 		subq.b	#1,SMPS_Track.Volume(a5)	; Reduce volume attenuation
 		move.b	SMPS_Track.Volume(a5),d6	; Get value
-		cmpi.b	#$10,d6				; Is it is < $10?
-		blo.s	.sendpsgvol			; Branch if yes
-		moveq	#$F,d6				; Limit to $F (maximum attenuation)
-; loc_726C8:
-.sendpsgvol:
+		tst.b	SMPS_Track.VoiceIndex(a5)	; Is this track using volume envelope 0 (no envelope)?
+		bne.s	.nextpsg				; If so, update volume (this code is only run on envelope 1+, so we need to do it here for envelope 0)
 		jsr	SetPSGVolume(pc)
 ; loc_726CC:
 .nextpsg:
@@ -1564,7 +1563,7 @@ PSGUpdateTrack:
 		subq.b	#1,SMPS_Track.DurationTimeout(a5)	; Update note timeout
 		bne.s	.notegoing
 		bclr	#4,SMPS_Track.PlaybackControl(a5)	; Clear 'do not attack note' bit
-		jsr	PSGDoNext(pc)
+		bsr.s	PSGDoNext
 		jsr	PSGDoNoteOn(pc)
 		bra.w	PSGDoVolFX
 ; ===========================================================================
@@ -1596,7 +1595,7 @@ PSGDoNext:
 .gotnote:
 		tst.b	d5		; Is it a note?
 		bpl.s	.gotduration	; Branch if not
-		jsr	PSGSetFreq(pc)
+		bsr.s	PSGSetFreq
 		move.b	(a4)+,d5	; Get another byte
 ;		tst.b	d5		; Is it a duration?
 		bpl.s	.gotduration	; Branch if yes
@@ -1691,19 +1690,17 @@ PSGDoVolFX:	; This can actually be made a bit more efficient, see the comments f
 		subq.w	#1,d0
 		lsl.w	#2,d0
 		movea.l	(a0,d0.w),a0
-		move.b	SMPS_Track.VolEnvIndex(a5),d0	; Get volume envelope index		; move.b	SMPS_Track.VolEnvIndex(a5),d0
-		move.b	(a0,d0.w),d0			; Volume envelope value			; addq.b	#1,SMPS_Track.VolEnvIndex(a5)
-		addq.b	#1,SMPS_Track.VolEnvIndex(a5)	; Increment volume envelope index	; move.b	(a0,d0.w),d0
-		btst	#7,d0				; Is volume envelope value negative?	; <-- makes this line redundant
-		beq.s	.gotflutter			; Branch if not				; but you gotta make this one a bpl
+		
+PSGDoVolFX_Loop:
+		move.b	SMPS_Track.VolEnvIndex(a5),d0	; Get volume envelope index
+		addq.b	#1,SMPS_Track.VolEnvIndex(a5)	; Increment volume envelope index
+		move.b	(a0,d0.w),d0			; Volume envelope value
+		bpl.s	.gotflutter			; Branch if not a terminator
 		cmpi.b	#$80,d0				; Is it the terminator?			; Since this is the only check, you can take the optimisation a step further:
 		beq.s	VolEnvHold			; If so, branch				; Change the previous beq (bpl) to a bmi and make it branch to VolEnvHold to make these last two lines redundant
 ; loc_72960:
 .gotflutter:
 		add.w	d0,d6		; Add volume envelope value to volume
-		cmpi.b	#$10,d6		; Is volume $10 or higher?
-		blo.s	SetPSGVolume	; Branch if not
-		moveq	#$F,d6		; Limit to silence and fall through
 ; End of function PSGUpdateVolFX
 
 
@@ -1719,6 +1716,11 @@ SetPSGVolume:
 		bne.s	PSGCheckNoteTimeout 			; Branch if yes
 ; loc_7297C:
 PSGSendVolume:
+		cmpi.b	#$10,d6		; Is volume $10 or higher?
+		blo.s	.abovesilence	; Branch if not
+		moveq	#$F,d6		; Limit to silence and fall through
+		
+.abovesilence:
 		or.b	SMPS_Track.VoiceControl(a5),d6	; Add in track selector bits
 		addi.b	#$10,d6				; Mark it as a volume command
 		move.b	d6,(psg_input).l
@@ -1738,8 +1740,8 @@ PSGCheckNoteTimeout:
 ; ===========================================================================
 ; loc_7299A: FlutterDone:
 VolEnvHold:
-		subq.b	#1,SMPS_Track.VolEnvIndex(a5)	; Decrement volume envelope index
-		rts	
+		subq.b	#2,SMPS_Track.VolEnvIndex(a5)	; Decrement volume envelope index
+		bra.s	PSGDoVolFX_Loop	
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
@@ -2048,7 +2050,7 @@ cfStopSpecialFM4:
 		bset	#1,SMPS_Track.PlaybackControl(a5)	; Set 'track at rest' bit
 		moveq	#0,d0
 		move.b	SMPS_Track.VoiceIndex(a5),d0		; Current voice
-		jsr	SetVoice(pc)
+		bsr.s	SetVoice
 		movea.l	a3,a5
 ; loc_72C22:
 .locexit:
@@ -2261,8 +2263,8 @@ cfStopTrack:
 ; loc_72DA8:
 .getpointer:
 		subq.b	#2,d0	; SFX can only use FM3 and up
-		lsl.b	#2,d0
-		movea.l	(a0,d0.w),a5
+		add.b	d0,d0
+		movea.w	(a0,d0.w),a5
 		tst.b	SMPS_Track.PlaybackControl(a5)	; Is track playing?
 		bpl.s	.novoiceupd			; Branch if not
 		movea.l	SMPS_RAM.v_voice_ptr(a6),a1	; Get voice pointer
@@ -2270,6 +2272,7 @@ cfStopTrack:
 .gotpointer:
 		bclr	#2,SMPS_Track.PlaybackControl(a5)	; Clear 'SFX overriding' bit
 		bset	#1,SMPS_Track.PlaybackControl(a5)	; Set 'track at rest' bit
+		moveq	#0,d0
 		move.b	SMPS_Track.VoiceIndex(a5),d0		; Current voice
 		jsr	SetVoice(pc)
 ; loc_72DC8:
@@ -2289,8 +2292,8 @@ cfStopTrack:
 ; loc_72DE0:
 .getchannelptr:
 		lea	SFX_BGMChannelRAM(pc),a0
-		lsr.b	#3,d0
-		movea.l	(a0,d0.w),a0
+		lsr.b	#4,d0
+		movea.w	(a0,d0.w),a0
 ; loc_72DEA:
 .gotchannelptr:
 		bclr	#2,SMPS_Track.PlaybackControl(a0)	; Clear 'SFX overriding' bit
