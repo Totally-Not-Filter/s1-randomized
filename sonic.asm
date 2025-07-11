@@ -2177,15 +2177,6 @@ GM_Title:
 		jsr	(BuildSprites).l
 		bsr.w	PaletteFadeIn
 		disable_ints
-		locVRAM	ArtTile_Title_Foreground*tile_size
-		lea	(Nem_TitleFg).l,a0 ; load title	screen patterns
-		bsr.w	NemDec
-		locVRAM	ArtTile_Title_Sonic*tile_size
-		lea	(Nem_TitleSonic).l,a0 ;	load Sonic title screen	patterns
-		bsr.w	NemDec
-		locVRAM	ArtTile_Title_Trademark*tile_size
-		lea	(Nem_TitleTM).l,a0 ; load "TM" patterns
-		bsr.w	NemDec
 		lea	(vdp_data_port).l,a6
 		locVRAM	ArtTile_Level_Select_Font*tile_size,4(a6)
 		lea	(Art_Text).l,a5	; load level select font
@@ -2236,6 +2227,15 @@ Tit_LoadText:
 ;		lea	(Blk256_GHZ).l,a0 ; load GHZ 256x256 mappings
 ;		lea	(v_256x256&$FFFFFF).l,a1
 ;		bsr.w	KosDec
+		locVRAM	ArtTile_Title_Foreground*tile_size
+		lea	(Nem_TitleFg).l,a0 ; load title	screen patterns
+		bsr.w	NemDec
+		locVRAM	ArtTile_Title_Sonic*tile_size
+		lea	(Nem_TitleSonic).l,a0 ;	load Sonic title screen	patterns
+		bsr.w	NemDec
+		locVRAM	ArtTile_Title_Trademark*tile_size
+		lea	(Nem_TitleTM).l,a0 ; load "TM" patterns
+		bsr.w	NemDec
 		bsr.w	LevelLayoutLoad
 		bsr.w	PaletteFadeOut
 		disable_ints
