@@ -3,6 +3,8 @@
 ; ---------------------------------------------------------------------------
 
 Obj4F:
+		moveq	#plcid_SPLATS,d0
+		jsr	AddPLC.w
 		moveq	#0,d0
 		move.b	obRoutine(a0),d0
 		move.w	off_D202(pc,d0.w),d1
@@ -80,10 +82,9 @@ loc_D2C4:
 
 loc_D2C8:
 		bsr.w	ObjectFall
-		bsr.w	DisplaySprite
 		tst.b	obRender(a0)
 		bpl.w	DeleteObject
-		rts
+		bra.w	DisplaySprite
 ; ---------------------------------------------------------------------------
 
 sub_D2DA:

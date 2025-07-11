@@ -150,11 +150,6 @@ UpdateMusic:
 		jsr	CycleSoundQueue(pc)
 ; loc_71BBC:
 .nosndinput:
-		cmpi.b	#$80,SMPS_RAM.v_sound_id(a6)	; is song queue set for silence (empty)?
-		beq.s	.nonewsound			; If yes, branch
-		jsr	PlaySoundID(pc)
-; loc_71BC8:
-.nonewsound:
 		lea	SMPS_RAM.v_music_dac_track(a6),a5
 		tst.b	SMPS_Track.PlaybackControl(a5)	; Is DAC track playing?
 		bpl.s	.dacdone			; Branch if not
@@ -589,13 +584,6 @@ CycleSoundQueue:
 		clr.b	(a1)+				; Clear entry
 		subi.b	#bgm__First,d0			; Make it into 0-based index
 		bcs.s	.nextinput			; If negative (i.e., it was $80 or lower), branch
-		cmpi.b	#$80,SMPS_RAM.v_sound_id(a6)	; Is v_sound_id a $80 (silence/empty)?
-		beq.s	.havesound			; If yes, branch
-		move.b	d1,SMPS_RAM.v_soundqueue0(a6)	; Put sound into v_soundqueue0
-		bra.s	.nextinput
-; ===========================================================================
-; loc_71F2C:
-.havesound:
 		andi.w	#$7F,d0				; Clear high byte and sign bit
 		move.b	(a0,d0.w),d2			; Get sound type
 		cmp.b	d3,d2				; Is it a lower priority sound?
@@ -611,7 +599,6 @@ CycleSoundQueue:
 		_move.b	d3,SMPS_RAM.v_sndprio(a6)	; Set new sound priority
 ; locret_71F4A:
 .locret:
-		rts	
 ; End of function CycleSoundQueue
 
 
