@@ -661,8 +661,14 @@ PlaySegaSound:
 		cmpi.b	#(segasoundtbl_end-segasoundtbl)-1,d0
 		bhi.s	.loop
 		move.b	(a0,d0.w),d0
-		jmp	MegaPCM_PlaySample
+		jsr	MegaPCM_PlaySample
+.loopsample:
+		jsr	ReadJoypads.w
+		tst.b	v_jpadpress1.w	; btnStart | is start pressed?
+		bmi.s	.loopsample	; if not, branch
+		rts
 segasoundtbl:
+		dc.b	$8F
 		dc.b	$8E
 		dc.b	$8D
 		dc.b	$8C

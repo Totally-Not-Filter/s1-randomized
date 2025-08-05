@@ -22,6 +22,15 @@ HUD_Main:	; Routine 0
 		move.b	#0,obPriority(a0)
 
 HUD_Flash:	; Routine 2
+		tst.b	v_bouncy_hud.w	; is bouncy hud enabled?
+		beq.s	.continue	; if not, branch
+		move.w	#-$400,obVelY(a0)	; move upwards
+		cmpi.w	#-$100,obScreenY(a0)	; is position beyond player's view?
+		bne.s	.continue	; if not, branch
+		neg.w	obVelY(a0)	; reverse
+
+.continue:
+		jsr	SpeedToPos.l
 		tst.w	(v_rings).w	; do you have any rings?
 		beq.s	.norings	; if not, branch
 		clr.b	obFrame(a0)	; make all counters yellow

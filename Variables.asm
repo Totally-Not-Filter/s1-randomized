@@ -186,7 +186,7 @@ v_limitleft3:		ds.w	1		; left level boundary, at the end of an act
 v_scrshiftx:		ds.w	1		; x-screen shift (new - last) * $100
 v_scrshifty:		ds.w	1		; y-screen shift (new - last) * $100
 v_lookshift:		ds.w	1		; screen shift when Sonic looks up/down
-v_unused7:		ds.b	1		; unused
+v_youvegotmail:		ds.b	1		; unused
 v_unused8:		ds.b	1		; unused
 v_dle_routine:		ds.b	1		; dynamic level event - routine counter
 			ds.b	1		; unused
@@ -379,7 +379,8 @@ v_ani2_frame:		ds.b	1		; synchronised sprite animation 2 - current frame
 v_ani3_time:		ds.b	1		; synchronised sprite animation 3 - time until next frame
 v_ani3_frame:		ds.b	1		; synchronised sprite animation 3 - current frame
 v_ani3_buf:		ds.w	1		; synchronised sprite animation 3 - info buffer
-			ds.b	$26		; unused
+v_bouncy_hud:		ds.b	1	; flag for bouncy hud
+			ds.b	$25		; unused
 v_limittopdb:		ds.w	1		; level upper boundary, buffered for debug mode
 v_limitbtmdb:		ds.w	1		; level bottom boundary, buffered for debug mode
 			ds.b	$C		; unused

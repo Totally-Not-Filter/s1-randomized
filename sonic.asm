@@ -944,7 +944,6 @@ ReadJoypads:
 		addq.w	#2,a1		; do the second	joypad
 
 .read:
-		stopZ80
 		move.b	#0,(a1)
 		nop	
 		nop	
@@ -963,7 +962,6 @@ ReadJoypads:
 		move.b	d0,(a0)+
 		and.b	d0,d1
 		move.b	d1,(a0)+
-		startZ80
 		rts	
 ; End of function ReadJoypads
 
@@ -2071,7 +2069,7 @@ Sega_WaitPal:
 		bsr.w	PlaySound_Special	; play "SEGA" sound
 		move.b	#$14,(v_vbla_routine).w
 		bsr.w	WaitForVBla
-		move.w	#30,(v_demolength).w
+		move.w	#60*6,(v_demolength).w
 
 Sega_WaitEnd:
 		move.b	#2,(v_vbla_routine).w
@@ -2557,7 +2555,7 @@ LevSelCode_US:	dc.b btnUp,btnDn,btnL,btnR,0,$FF
 ; ---------------------------------------------------------------------------
 
 GotoDemo:
-		move.w	#$1E,(v_demolength).w
+		move.w	#30,(v_demolength).w
 
 loc_33B6:
 		move.b	#4,(v_vbla_routine).w
@@ -2578,7 +2576,7 @@ loc_33E4:
 		andi.b	#btnStart,(v_jpadpress1).w ; is Start button pressed?
 		bne.w	Tit_ChkLevSel	; if yes, branch
 		tst.w	(v_demolength).w
-		bne.w	loc_33B6
+		bne.s	loc_33B6
 		move.b	#bgm_Fade,d0
 		bsr.w	PlaySound_Special ; fade out music
 		move.w	(v_demonum).w,d0 ; load	demo number
@@ -7257,6 +7255,9 @@ Map_Shield:	include	"_maps/Shield and Invincibility.asm"
 Map_Vanish:	include	"_maps/Special Stage Entry (Unused).asm"
 		include	"_anim/Water Splash.asm"
 Map_Splash:	include	"_maps/Water Splash.asm"
+
+		include	"_incObj/02 You've Got Mail.asm"
+Map_mailtime:	dc.l	0
 
 		include	"_incObj/Sonic AnglePos.asm"
 

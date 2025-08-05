@@ -2,7 +2,7 @@
 ; Object pointers
 ; ---------------------------------------------------------------------------
 ptr_SonicPlayer:	dc.l SonicPlayer	; $01
-ptr_Obj02:		dc.l NullObject
+ptr_Obj02:		dc.l mailtime
 ptr_Obj03:		dc.l NullObject
 ptr_Obj04:		dc.l NullObject
 ptr_Obj05:		dc.l NullObject

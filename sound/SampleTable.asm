@@ -16,6 +16,8 @@ SampleTable:
 	dcSample	TYPE_PCM,		SegaPCM,	0, FLAGS_SFX		; $8C	NOTE: sample rate is auto-detected from WAV file
 	dcSample	TYPE_DPCM,		OS95,	20600, FLAGS_SFX		; $8D
 	dcSample	TYPE_DPCM,		GOOSEHONKYHONK,	20600, FLAGS_SFX	; $8E
+	dcSample	TYPE_PCM,		welcomeaol,	22254, FLAGS_SFX	; $8F
+	dcSample	TYPE_DPCM,		yougotmailaol,	11127, FLAGS_SFX	; $90
 	dc.w	-1	; end marker
 
 ; ---------------------------------------------------------------
@@ -25,4 +27,6 @@ SampleTable:
 	incdac	SegaPCM, "sound/dac/sega.wav"
 	incdac	OS95, "sound/dac/o95.bin"
 	incdac	GOOSEHONKYHONK, "sound/dac/goose_honk.bin"
+	incdac	welcomeaol, "sound/dac/welcome.raw"
+	incdac	yougotmailaol, "sound/dac/you've got mail.bin"
 	even

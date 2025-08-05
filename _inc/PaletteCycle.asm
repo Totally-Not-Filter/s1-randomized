@@ -7,15 +7,15 @@
 
 PaletteCycle:
 		lea	palcycle_sonic_rainbowmized(pc),a0
-		subq.w	#1,(v_unused2).w ; decrement timer
+		subq.b	#1,(v_unused2).w ; decrement timer
 		bpl.s	sonicrain_Skip	; if time remains, branch
 
-		move.w	#8-1,(v_unused2).w ; reset timer to 8 frames
+		move.b	#8-1,(v_unused2).w ; reset timer to 8 frames
 		move.w	(v_unused3).w,d0 ; get cycle number
 		addq.w	#4*2,(v_unused3).w ; increment cycle number
 		cmpi.w	#12*8,(v_unused3).w		; if cycle > 12, reset to 0
 		blo.s	sonicrain_pal
-		move.w	#0*8,(v_unused3).w
+		clr.w	(v_unused3).w
 sonicrain_pal:
 		move.l	(a0,d0.w),(v_palette+4).w
 		move.l	4(a0,d0.w),(v_palette+8).w
