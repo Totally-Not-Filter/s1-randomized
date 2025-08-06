@@ -654,7 +654,7 @@ PlaySegaSound:
 .loop:
 		jsr	RandomNumber.w
 		andi.l	#$FF,d0
-		moveq	#3-1,d1
+		moveq	#(segasoundtbl_end-segasoundtbl)-1,d1
 		cmp.b	d1,d0
 		bhi.s	.loop
 		lea	segasoundtbl(pc),a0
@@ -668,6 +668,7 @@ PlaySegaSound:
 		bmi.s	.loopsample	; if not, branch
 		rts
 segasoundtbl:
+		dc.b	$84
 		dc.b	$8F
 		dc.b	$8E
 		dc.b	$8D

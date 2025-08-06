@@ -5,7 +5,7 @@ SampleTable:
 	dcSample	TYPE_DPCM, 		Kick, 		8000				; $81
 	dcSample	TYPE_PCM,		Snare,		24000				; $82
 	dcSample	TYPE_DPCM, 		Timpani, 	7250				; $83
-	dcSample	TYPE_NONE										; $84
+	dcSample	TYPE_DPCM,		forgotoctagon,	20600,	FLAGS_SFX	; $84
 	dcSample	TYPE_NONE										; $85
 	dcSample	TYPE_NONE										; $86
 	dcSample	TYPE_NONE										; $87
@@ -24,6 +24,7 @@ SampleTable:
 	incdac	Kick, "sound/dac/kick.dpcm"
 	incdac	Snare, "sound/dac/snare.pcm"
 	incdac	Timpani, "sound/dac/timpani.dpcm"
+	incdac	forgotoctagon, "sound/dac/forgotoctagon.bin"
 	incdac	SegaPCM, "sound/dac/sega.wav"
 	incdac	OS95, "sound/dac/o95.bin"
 	incdac	GOOSEHONKYHONK, "sound/dac/goose_honk.bin"
